@@ -15,7 +15,7 @@ export const _obj = {
         return from;
     },
 
-    excludeKey<T>(from: Record<any, any>, key: string) {
+    excludeKey(from: Record<any, any>, key: string) {
         if (!key) return from;
         delete from[key];
         return from;
@@ -39,6 +39,7 @@ export const _obj = {
     isEmpty(obj: any): boolean {
         return !obj || Object.keys(obj).length === 0;
     },
+
     isObject(o: unknown): boolean {
         if (!o) return false;
         return Object.getPrototypeOf({}) == Object.getPrototypeOf(o) && !Array.isArray(o) && typeof o == 'object';
@@ -76,12 +77,14 @@ export const _obj = {
      * @returns A new transformed object.
      */
     reorderKeys(obj: any, order: string[]): any {
-        const copy = Object.assign({}, obj);
+        let copy = Object.assign({}, obj);
 
         const keys = Array.from(Object.keys(obj)).sort((a, b) => {
-            for (let k of order) {
-                if (a === k) return -1;
-                if (b === k) return 1;
+            if (order.includes(a) || order.includes(b)) {
+                for (let k of order) {
+                    if (a === k) return -1;
+                    if (b === k) return 1;
+                }
             }
 
             return 0;
@@ -91,6 +94,8 @@ export const _obj = {
             delete obj[k];
             obj[k] = copy[k];
         }
+
+        copy = null;
 
         return obj;
     },
@@ -126,30 +131,62 @@ export const _obj = {
     },
 
     /**
-     * Walk through all the object property keys recursively and apply a transform to each key.
+     * Walk through all the object property keys and apply a transform to each key.
      * @param obj
      * @param fn
      */
-    transformKeys(obj: any, fn: (key: string) => string) {
+    transformKeys(obj: Record<any, any>, fn: (key: string) => string) {
         if (!_obj.isObject(obj)) return obj;
 
-        // const result = {};
-        // const result = obj;
         const keys = Object.keys(obj);
 
         for (let oldKey of keys) {
-            const value = obj[oldKey];
+            const val = obj[oldKey];
             const transformedKey = fn(oldKey);
 
-            obj[transformedKey] = value;
+            obj[transformedKey] = val;
             delete obj[oldKey];
 
-            if (Array.isArray(value)) {
-                for (let i = 0; i < value.length; i++) {
-                    value[i] = this.transformKeys(value[i], fn);
+            if (Array.isArray(val)) {
+                for (let i = 0; i < val.length; i++) {
+                    if (_obj.isObject(val[i])) {
+                        val[i] = this.transformKeys(val[i], fn);
+                    }
                 }
-            } else if (_obj.isObject(value)) {
-                obj[transformedKey] = this.transformKeys(value, fn);
+            } else if (_obj.isObject(val)) {
+                obj[transformedKey] = this.transformKeys(val, fn);
+            }
+        }
+
+        return obj;
+    },
+
+    /**
+     * Walk through all the object property values and apply a transform to each value.
+     *
+     * @param obj
+     * @param fn
+     */
+    transformValues(obj: Record<any, any>, fn: (value: any) => any) {
+        if (!_obj.isObject(obj)) return obj;
+
+        const keys: any[] = Object.keys(obj);
+
+        for (let key of keys) {
+            const val = obj[key];
+
+            if (_obj.isObject(val)) {
+                _obj.transformValues(val, fn);
+            } else if (Array.isArray(val)) {
+                for (let i = 0; i < val.length; i++) {
+                    if (_obj.isObject(val[i])) {
+                        val[i] = _obj.transformValues(val[i], fn);
+                    } else {
+                        val[i] = fn(val[i]);
+                    }
+                }
+            } else {
+                obj[key] = fn(val);
             }
         }
 
