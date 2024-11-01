@@ -1,0 +1,40 @@
+{
+  "name": "@utilis/object",
+  "version": "0.0.1-alpha",
+  "description": "Object utils",
+  "main": "dist/index.js",
+  "scripts": {
+    "clean": "rimraf dist/",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "tscheck": "tsc --noEmit",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run build",
+    "devc-verdaccio": "devc verdaccio"
+  },
+  "keywords": [
+    "utilis",
+    "utils",
+    "object",
+    "utility",
+    "javascript",
+    "typescript"
+  ],
+  "author": "Ikenna Agbasimalo <michfx@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist/",
+    "LICENSE",
+    "package.json",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@types/dotenv": "^8.2.3",
+    "@types/node": "^22.8.1",
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}
