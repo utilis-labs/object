@@ -1,6 +1,6 @@
 {
   "name": "@utilis/object",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Object utils",
   "main": "dist/index.js",
   "scripts": {
@@ -22,6 +22,7 @@
     "typescript"
   ],
   "author": "Ikenna Agbasimalo <michfx@gmail.com>",
+  "repository": "https://github.com/utilis-labs/object",
   "license": "MIT",
   "type": "module",
   "files": [

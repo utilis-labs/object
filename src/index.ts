@@ -196,8 +196,8 @@ export const _obj = {
      * @param ob
      * @param keys
      */
-    pick<T extends Record<string, any>, K extends keyof T>(ob: T, keys: Array<K>): Partial<T> {
-        const propKeys = Object.keys(ob) as Array<K>;
+    pick<T extends Record<string, any>>(ob: T, keys: Array<keyof T>): Partial<T> {
+        const propKeys = Object.keys(ob) as Array<keyof T>;
         const res: Partial<T> = {};
 
         for (const prop of propKeys) {
@@ -214,8 +214,8 @@ export const _obj = {
      * @param ob
      * @param keys
      */
-    skip<T extends Record<string, any>, K extends keyof T>(ob: T, keys: Array<K>): Partial<T> {
-        const propKeys = Object.keys(ob) as Array<K>;
+    skip<T extends Record<string, any>>(ob: T, keys: Array<keyof T>): Partial<T> {
+        const propKeys = Object.keys(ob) as Array<keyof T>;
         const res: Partial<T> = {};
 
         for (const prop of propKeys) {
