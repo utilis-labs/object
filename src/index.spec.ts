@@ -15,6 +15,8 @@ describe('_obj', () => {
 
         _obj.merge(ob1, ob2);
 
+        _obj.merge(ob1, undefined)
+
         expect(ob1).toHaveProperty('age');
         expect(ob1).toHaveProperty('occupation');
     });
@@ -34,6 +36,8 @@ describe('_obj', () => {
 
         _obj.exclude(ob1, blacklist);
 
+        _obj.exclude(ob1, undefined)
+
         expect(Object.keys(ob1).includes('b')).toBeFalsy();
         expect(Object.keys(ob1).includes('d')).toBeFalsy();
     });
@@ -47,6 +51,7 @@ describe('_obj', () => {
         };
 
         _obj.excludeKey(ob, 'c');
+        _obj.excludeKey(ob, '');
 
         const keys = Object.keys(ob);
         expect(keys.includes('c')).toBe(false);
@@ -127,13 +132,13 @@ describe('_obj', () => {
             d: 'D'
         };
 
-        const order1 = ['d', 'b', 'a', 'c'];
+        const order1 = ['d', 'b', 'a', 'c', 'c'];
         _obj.reorderKeys(ob, order1);
-        expect(Object.keys(ob)).toEqual(order1);
+        expect(Object.keys(ob)).toEqual(['d', 'b', 'a', 'c']);
 
         const order2 = ['a'];
         _obj.reorderKeys(ob, order2);
-        expect(Object.keys(ob)).toEqual(Object.keys(ob))
+        expect(Object.keys(ob)).toEqual(Object.keys(ob));
     });
 
     test('_obj.initializeNumberValue', () => {
@@ -221,6 +226,16 @@ describe('_obj', () => {
         expect(item['Food']).toEqual('fish');
     });
 
+    test('_obj.transformKeys(not-obj-arg)', () => {
+        const ob: any = 'foo';
+
+        const res = _obj.transformKeys(ob, () => {
+            return ''
+        })
+
+        expect(res).toEqual('foo')
+    })
+
     test('_obj.transformValues', () => {
         const ob = {
             name: 'john',
@@ -255,4 +270,45 @@ describe('_obj', () => {
         let item = ob['kids'][2];
         expect(item['food']).toEqual('FISH');
     });
+
+    test('_obj.transformValues(not-obj-arg)', () => {
+        const ob: any = 'foo';
+        const res = _obj.transformValues(ob, () => {
+            return ''
+        })
+        expect(res).toEqual('foo')
+    })
+
+    test('_obj.pick()', () => {
+        const ob = {
+            a: 'a',
+            b: 'b',
+            c: 'c',
+            d: 'd',
+            e: 'e'
+        };
+
+        const res = _obj.pick(ob, ['a', 'c']);
+        expect(res).toEqual({
+            a: 'a',
+            c: 'c'
+        });
+    });
+
+    test('_obj.skip()', () => {
+        const ob = {
+            a: 'a',
+            b: 'b',
+            c: 'c',
+            d: 'd',
+            e: 'e'
+        }
+
+        const res = _obj.skip(ob, ['a', 'd'])
+        expect(res).toEqual({
+            b: 'b',
+            c: 'c',
+            e: 'e'
+        })
+    })
 });

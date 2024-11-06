@@ -54,13 +54,19 @@ export const _obj = {
     setFirstKey(obj: any, key: string): any {
         let copy = Object.assign({}, obj);
 
-        const keys = Array.from(Object.keys(obj)).sort((a, b) => {
-            if (a === key) return -1;
-            if (b === key) return 1;
-            return 0;
-        });
+        let obKeys = Object.keys(obj);
 
-        for (let k of keys) {
+        for (let i = 0; i < obKeys.length; i++) {
+            let k = obKeys[i];
+
+            if (k === key) {
+                delete obKeys[i];
+                obKeys.unshift(key);
+                break;
+            }
+        }
+
+        for (let k of obKeys) {
             delete obj[k];
             obj[k] = copy[k];
         }
@@ -78,19 +84,11 @@ export const _obj = {
      */
     reorderKeys(obj: any, order: string[]): any {
         let copy = Object.assign({}, obj);
+        Object.keys(obj);
 
-        const keys = Array.from(Object.keys(obj)).sort((a, b) => {
-            if (order.includes(a) || order.includes(b)) {
-                for (let k of order) {
-                    if (a === k) return -1;
-                    if (b === k) return 1;
-                }
-            }
+        const orderSet: Set<string> = new Set(order);
 
-            return 0;
-        });
-
-        for (let k of keys) {
+        for (let k of orderSet) {
             delete obj[k];
             obj[k] = copy[k];
         }
@@ -191,5 +189,41 @@ export const _obj = {
         }
 
         return obj;
+    },
+
+    /**
+     * Return object containing only entries of the specified keys.
+     * @param ob
+     * @param keys
+     */
+    pick<T extends Record<string, any>, K extends keyof T>(ob: T, keys: Array<K>): Partial<T> {
+        const propKeys = Object.keys(ob) as Array<K>;
+        const res: Partial<T> = {};
+
+        for (const prop of propKeys) {
+            if (keys.includes(prop)) {
+                res[prop] = ob[prop];
+            }
+        }
+
+        return res;
+    },
+
+    /**
+     * Return object containing only entries that are not among the specified keys.
+     * @param ob
+     * @param keys
+     */
+    skip<T extends Record<string, any>, K extends keyof T>(ob: T, keys: Array<K>): Partial<T> {
+        const propKeys = Object.keys(ob) as Array<K>;
+        const res: Partial<T> = {};
+
+        for (const prop of propKeys) {
+            if (!keys.includes(prop)) {
+                res[prop] = ob[prop];
+            }
+        }
+
+        return res;
     }
 };
