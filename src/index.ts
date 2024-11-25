@@ -225,5 +225,24 @@ export const _obj = {
         }
 
         return res;
+    },
+
+    copy<T = any>(ob: T) {
+        return Object.assign({}, ob) as T;
+    },
+
+    /**
+     * Set an object property
+     * @param ob
+     * @param key
+     * @param value
+     */
+    set<T>(ob: T, key: string, value: any) {
+        ob[key] = value;
+        return ob;
+    },
+
+    toJson(ob: any, spaces: number = 2) {
+        return JSON.stringify(ob, null, spaces);
     }
 };
