@@ -1,12 +1,19 @@
 {
   "name": "@utilis/object",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Object utils",
-  "main": "dist/index.js",
+  "main": "dist/esm/index.js",
+  "type": "module",
+  "exports": {
+    "require": "./dist/cjs/index.js",
+    "import": "./dist/esm/index.js"
+  },
   "scripts": {
     "clean": "rimraf dist/",
     "prebuild": "npm run clean",
-    "build": "tsc",
+    "build": "npm run build-esm && npm run build-cjs",
+    "build-esm": "node tsc-esm.cjs",
+    "build-cjs": "node tsc-cjs.cjs",
     "tscheck": "tsc --noEmit",
     "test": "vitest run",
     "coverage": "vitest run --coverage",
@@ -24,7 +31,6 @@
   "author": "Ikenna Agbasimalo <michfx@gmail.com>",
   "repository": "https://github.com/utilis-labs/object",
   "license": "MIT",
-  "type": "module",
   "files": [
     "dist/",
     "LICENSE",
